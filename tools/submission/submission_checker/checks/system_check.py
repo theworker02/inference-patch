@@ -86,7 +86,15 @@ class SystemCheck(BaseCheck):
         Returns:
             bool: True if status is valid, False otherwise.
         """
-        availability = self.system_json.get("status").lower()
+        availability = self.system_json.get("status")
+        if not isinstance(availability, str):
+            self.log.error(
+                "%s has invalid status (%r); status must be a string",
+                self.path,
+                availability,
+            )
+            return False
+        availability = availability.lower()
         if availability not in VALID_AVAILABILITIES:
             self.log.error(
                 "%s has invalid status (%s)", self.path, availability
